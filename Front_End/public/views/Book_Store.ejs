@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Books Store</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <button class="btn-addbooks" onclick="location.href='/Addbooks'"> Add Book </button>
+
+        <div class="book-table">
+            <h1>Books Store</h1>
+
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Price</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                <% books.forEach(book => { %>
+                <tr>
+                    <td><%= book.books_ID %></td>
+                    <td><%= book.title %></td>
+                    <td><%= book.author %></td>
+                    <td>$<%= book.price %></td>
+                    <td>
+                        <button class="btn-edit">
+                            <a href="/editBook/<%= book.books_ID %>">Edit</a>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn-delete">
+                            <a href="/deleteBook/<%= book.books_ID %>">Delete</a>
+                        </button>
+                    </td>
+                </tr>
+                <% }); %>
+            </table> 
+        </div>
+    </div>
+</body>
+
+</html>
