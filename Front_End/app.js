@@ -64,7 +64,8 @@ app.post('/editBookPost/:books_ID', async (req, res) => {
             books_ID: req.params.books_ID,
             title: req.body.title, 
             author: req.body.author, 
-            price: req.body.price 
+            price: req.body.price ,
+            category_id: req.body.category_id
         };
 
         await axios.post(`${base_url}/updateBook/${data.books_ID}`, data);

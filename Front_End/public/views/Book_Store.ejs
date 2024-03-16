@@ -10,11 +10,9 @@
 
 <body>
     <div class="container">
-
-        <button class="btn-addbooks" onclick="location.href='/Addbooks'"> Add Book </button>
-
         <div class="book-table">
-            <h1>Books Store</h1>
+            <center><h1>Books Store</h1></center>
+            <button class="btn-addbooks" onclick="location.href='/Addbooks'"> Add Book </button>
 
             <table>
                 <tr>
@@ -22,6 +20,7 @@
                     <th>Title</th>
                     <th>Author</th>
                     <th>Price</th>
+                    <th>Category</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -31,6 +30,7 @@
                     <td><%= book.title %></td>
                     <td><%= book.author %></td>
                     <td>$<%= book.price %></td>
+                    <td><%= book.category_name %></td>
                     <td>
                         <button class="btn-edit">
                             <a href="/editBook/<%= book.books_ID %>">Edit</a>
@@ -43,7 +43,7 @@
                     </td>
                 </tr>
                 <% }); %>
-            </table> 
+            </table>
         </div>
     </div>
 </body>

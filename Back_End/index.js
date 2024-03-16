@@ -9,34 +9,35 @@ app.use(express.urlencoded({
 }));
 
 // Connection Database
-const db = new sqlite.Database('booksystem.sqlite');
+const db = new sqlite.Database('Database.sqlite');
 
 db.run(`CREATE TABLE IF NOT EXISTS Books (
     books_ID INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
     author TEXT,
-    price INTEGER
+    price INTEGER,
+    category_id INTEGER,
+    FOREIGN KEY (category_id) REFERENCES Categories(categories_ID)
 )`);
 
-db.run(`CREATE TABLE IF NOT EXISTS Customers (
-    customer_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name TEXT
-)`);
-
-db.run(`CREATE TABLE IF NOT EXISTS Sales (
-    sale_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    books_ID INTEGER,
-    customer_ID INTEGER,
-    FOREIGN KEY (books_ID) REFERENCES Books(books_ID),
-    FOREIGN KEY (customer_ID) REFERENCES Customers(customer_ID)
+db.run(`CREATE TABLE IF NOT EXISTS Categories (
+    categories_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_name VARCHAR(255) NOT NULL
 )`);
 
 // Show Books Route
 app.get("/books", (req, res) => {
     try {
-        db.all(`SELECT * FROM Books`, (err, books) => {
-            if (err) res.status(500).send(err);
-            else res.send(books);
+        const sql = `SELECT Books.*, Categories.category_name 
+                     FROM Books 
+                     LEFT JOIN Categories ON Books.category_id = Categories.categories_ID`;
+        db.all(sql, (err, books) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send(err);
+            } else {
+                res.send(books);
+            }
         });
     } catch (err) {
         console.error(err);
@@ -47,8 +48,8 @@ app.get("/books", (req, res) => {
 // Add Books Route
 app.post("/AddBooks", (req, res) => {
     const book = req.body;
-    const sql = `INSERT INTO Books (title, author, price) VALUES (?, ?, ?)`;
-    db.run(sql, [book.title, book.author, book.price], (err) => {
+    const sql = `INSERT INTO Books (title, author, price, category_id) VALUES (?, ?, ?, ?)`;
+    db.run(sql, [book.title, book.author, book.price, book.category_id], (err) => {
         if (err) res.status(500).send(err);
         else {
             const books_ID = this.lastID;
@@ -62,9 +63,9 @@ app.post("/AddBooks", (req, res) => {
 app.post('/updateBook/:books_ID', async (req, res) => {
     const books_ID = req.params.books_ID;
     const data = req.body;
-    const sql = `UPDATE Books SET title = ?, author = ?, price = ? WHERE books_ID = ?;`;
+    const sql = `UPDATE Books SET title = ?, author = ?, price = ?, category_id = ? WHERE books_ID = ?;`;
 
-    db.run(sql, [data.title, data.author, data.price, books_ID], (err) => {
+    db.run(sql, [data.title, data.author, data.price, data.category_id, books_ID], (err) => {
         if (err) {
             console.error(err);
             res.status(500).send('Failed to update');
@@ -83,7 +84,7 @@ app.delete('/deleteBook/:books_ID', (req, res) => {
             res.status(500).send(err);
         } else res.send(`Delete Books Id ${bookId} Successfully!`);
     })
-})
+});
 
 // Server Start on Port 3000
 app.listen(port, () => {
